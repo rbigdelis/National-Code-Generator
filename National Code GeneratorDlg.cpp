@@ -64,6 +64,8 @@ BEGIN_MESSAGE_MAP(CNationalCodeGeneratorDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_EN_CHANGE(IDC_CITY_CODE_EDIT, &CNationalCodeGeneratorDlg::OnEnChangeCityCodeEdit)
+	ON_EN_CHANGE(IDC_UNIQUE_CODE_EDIT, &CNationalCodeGeneratorDlg::OnEnChangeUniqueCodeEdit)
 END_MESSAGE_MAP()
 
 
@@ -99,6 +101,8 @@ BOOL CNationalCodeGeneratorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	SendDlgItemMessage(IDC_CITY_CODE_EDIT, EM_SETLIMITTEXT, 3, 0);
+	SendDlgItemMessage(IDC_UNIQUE_CODE_EDIT, EM_SETLIMITTEXT, 6, 0);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -152,3 +156,62 @@ HCURSOR CNationalCodeGeneratorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CNationalCodeGeneratorDlg::OnEnChangeCityCodeEdit()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialogEx::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+	GenerateNationalCode();
+}
+
+
+void CNationalCodeGeneratorDlg::OnEnChangeUniqueCodeEdit()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialogEx::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+	GenerateNationalCode();
+}
+
+void CNationalCodeGeneratorDlg::GenerateNationalCode()
+{
+	CString cityCode;
+	CString	uniqueCode;
+	CString nationalCode;
+
+	GetDlgItemText(IDC_CITY_CODE_EDIT, cityCode);
+	GetDlgItemText(IDC_UNIQUE_CODE_EDIT, uniqueCode);
+
+	cityCode = cityCode.Trim();
+	uniqueCode = uniqueCode.Trim();
+	
+	while (cityCode.GetLength() < 3)
+		cityCode = CString("0") + cityCode;
+
+	while (uniqueCode.GetLength() < 6)
+		uniqueCode = CString("0") + uniqueCode;
+
+	nationalCode = cityCode + uniqueCode;
+	int sum = 0;
+	for (int i = 0; i < 9; i++)
+		sum += (nationalCode.GetAt(i) - _T('0')) * (10 - i);
+
+	CString temp;
+
+	sum = sum % 11;
+	if (sum < 2)
+		temp.Format(_T("%d"), sum); 
+	else
+		temp.Format(_T("%d"), 11 - sum);
+	nationalCode += temp;
+
+	SetDlgItemText(IDC_NATIONAL_CODE_EDIT, nationalCode);
+}

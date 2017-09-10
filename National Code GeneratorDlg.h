@@ -12,6 +12,8 @@ class CNationalCodeGeneratorDlg : public CDialogEx
 public:
 	CNationalCodeGeneratorDlg(CWnd* pParent = NULL);	// standard constructor
 
+	void GenerateNationalCode();
+
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_NATIONALCODEGENERATOR_DIALOG };
@@ -31,4 +33,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnEnChangeCityCodeEdit();
+	afx_msg void OnEnChangeUniqueCodeEdit();
 };
